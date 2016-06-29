@@ -26,6 +26,17 @@ html = '''
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
+        self.response.write('''
+        Welcome! <br>
+        Continue to:<br>
+        <A HREF="http://localhost:9080/shuffle-words">SHUFFLE</A>
+        to shuffle two words. <br>
+        <A HREF="http://localhost:9080/transit">TRAINSIT</A>
+        to get train times.
+        ''')
+
+class Shuffle(webapp2.RequestHandler):
+    def get(self):
         self.response.write(html)
     
     def post(self):
@@ -39,6 +50,17 @@ class MainHandler(webapp2.RequestHandler):
                 word += secondWord[i]
         self.response.out.write(word)
 
+class Map(webapp2.RequestHandler):
+    def get(self):
+        self.response.write("Sorry, all trains are out of service at the moment.")
+
+class Transit(webapp2.RequestHandler):
+    def get(self):
+        self.response.write("Sorry, all trains are out of service at the moment.")
+
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/shuffle-words', Shuffle),
+    ('/map', Map)
+    ('/transit', Transit),
 ], debug=True)
