@@ -71,6 +71,7 @@ class Route(webapp2.RequestHandler):
         <body>
             <hl> Choose towns/cities you want to travel between! </hl>
             <br>
+            <br>
             <form method = "post">
                 <label for = "start"> Leaving: </label>
                     <select name = "start">
@@ -100,8 +101,6 @@ class Route(webapp2.RequestHandler):
                         <option value="Cinnibar Island">Cinnibar Island</option>
                     </select>
                 <br>
-                <input name = "" type = "submit" value = "Submit">
-                <br>
                 <br>
                 <label for = "item"> Item: </label>
                     <select name = "item">
@@ -110,29 +109,42 @@ class Route(webapp2.RequestHandler):
                         <option value="Flying">Flying type Pokemon</option>
                         <option value="Ground">Ground type Pokemon</option>
                         <option value="Flash">Pokemon with 'flash'</option>
+                    </select>
+                <br>
+                <input name = "" type = "submit" value = "Submit">
                 <br>
             </form>
         </body>
     </html>
     '''
     
-    def find_all_possible_Route(start, end, MAP, route, self):
+    def find_all_possible_Routes(start, end, MAP, route, self):
         route = route + [start]
         if start == end:
             michi.append(route)
         else:
             for path in MAP[start]:
                 if path not in route:
-                    newpath = find_all_possible_Route(path, end, MAP, route)
+                    newpath = self.find_all_possible_Route(path, end, MAP, route)
         return michi
     
     def findRoute(michi):
         shortPath = []
-        minlen = len(min(michi))
+        keiyu = []
+        for i in range(len(michi)):
+            keiyu.append(len(michi[i]))
+        
+        minlen = min(keiyu)
         for routes in michi:
             if len(routes) == minlen:
                 shortPath.append(routes)
         return shortPath
+    
+    def suggestItem(shortPath):
+        for i in range(len(shortPath)):
+            if 'Cinnibar Island' in shortPath[i]:
+                return 'If taking the route {}, Bringing a water type Pokemon is suggested.'.format(shortPath[i])
+    
     
     def get(self):
         self.response.write(self.html)
@@ -143,8 +155,15 @@ class Route(webapp2.RequestHandler):
         MAP = self.MAP
         route = []
         michi = []
-        possibilities = self.find_all_possible_Route(start, end, MAP, route)
+        
+        possibilities = self.find_all_possible_Routes(start, end, MAP, route)
         short = self.findRoute(possibilities)
+        
+        if len(short) == 1:
+            self.response.write("Here is the shortest route to {}".format(short[-1][-1]))
+        else:
+            self.response.write("Here are {} shortest routes to {}".format(len(short),short[-1][-1]))
+        
         self.response.write(short)
 
 app = webapp2.WSGIApplication([
