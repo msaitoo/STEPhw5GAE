@@ -7,9 +7,9 @@ class MainHandler(webapp2.RequestHandler):
         self.response.write('''
         Welcome! <br>
         Continue to:<br>
-        <A HREF="http://localhost:9999/shuffle">SHUFFLE</A>
+        <A HREF="/shuffle">SHUFFLE</A>
         to shuffle two words. <br>
-        <A HREF="http://localhost:9999/route">ROUTE</A>
+        <A HREF="/route">ROUTE</A>
         to get routes to take in Kanto Region (Pokemon gen 1).
         ''')
 
@@ -118,7 +118,7 @@ class Route(webapp2.RequestHandler):
     </html>
     '''
     
-    def find_all_possible_Routes(start, end, MAP, route, self):
+    def find_all_possible_Routes(self, start, end, MAP, route):
         route = route + [start]
         if start == end:
             michi.append(route)
