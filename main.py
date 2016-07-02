@@ -132,9 +132,9 @@ class Route(webapp2.RequestHandler):
         
         
         if len(path) == 1:
-            self.response.write("Here is the shortest route to {}".format(path[-1][-1]))
+            self.response.write("Here is the shortest route to {} <br>".format(path[-1][-1]))
         else:
-            self.response.write("Here are {} shortest routes to {}".format(len(path),path[-1][-1]))
+            self.response.write("Here are {} shortest routes to {} <br>".format(len(path),path[-1][-1]))
         
         for i in range(len(path)):
             for x in range(len(path[i])):
@@ -142,12 +142,12 @@ class Route(webapp2.RequestHandler):
                 path[i][x] = rename
         
         if item == 'Flying type Pokemon':
-            self.response.write("<br>You can fly straight to {}!!! Or take take routes as following:".format(end))
+            self.response.write("<br>You can fly straight to {}!!! Or take take ground route as following:<br>".format(end))
         
         for i in range(len(path)):
             if 'Cinnibar Island' in path[i]:
                 if item != 'Water type Pokemon':
-                    self.response.write('<br>Please take a water type Pokemon with you to get to  Cinnibar Island.')
+                    self.response.write('<br>Please take a water type Pokemon with you to get to and out of Cinnibar Island.<br>')
         
         self.response.write(path)
 
