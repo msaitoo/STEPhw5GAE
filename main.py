@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 import webapp2
+from findpaths import findpaths
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
@@ -118,33 +119,6 @@ class Route(webapp2.RequestHandler):
     </html>
     '''
     
-    def find_all_possible_Routes(self, start, end, MAP, route):
-        route = route + [start]
-        if start == end:
-            michi.append(route)
-        else:
-            for path in MAP[start]:
-                if path not in route:
-                    newpath = self.find_all_possible_Route(path, end, MAP, route)
-        return michi
-    
-    def findRoute(michi):
-        shortPath = []
-        keiyu = []
-        for i in range(len(michi)):
-            keiyu.append(len(michi[i]))
-        
-        minlen = min(keiyu)
-        for routes in michi:
-            if len(routes) == minlen:
-                shortPath.append(routes)
-        return shortPath
-    
-    def suggestItem(shortPath):
-        for i in range(len(shortPath)):
-            if 'Cinnibar Island' in shortPath[i]:
-                return 'If taking the route {}, Bringing a water type Pokemon is suggested.'.format(shortPath[i])
-    
     
     def get(self):
         self.response.write(self.html)
@@ -152,19 +126,30 @@ class Route(webapp2.RequestHandler):
     def post(self):
         start = self.request.get("start")
         end = self.request.get("end")
+        item = self.request.get("item")
         MAP = self.MAP
-        route = []
-        michi = []
+        path = findpaths(start, end, MAP, item)
         
-        possibilities = self.find_all_possible_Routes(start, end, MAP, route)
-        short = self.findRoute(possibilities)
         
-        if len(short) == 1:
-            self.response.write("Here is the shortest route to {}".format(short[-1][-1]))
+        if len(path) == 1:
+            self.response.write("Here is the shortest route to {}".format(path[-1][-1]))
         else:
-            self.response.write("Here are {} shortest routes to {}".format(len(short),short[-1][-1]))
+            self.response.write("Here are {} shortest routes to {}".format(len(path),path[-1][-1]))
         
-        self.response.write(short)
+        for i in range(len(path)):
+            for x in range(len(path[i])):
+                rename = path[i][x].encode('utf8')
+                path[i][x] = rename
+        
+        if item == 'Flying type Pokemon':
+            self.response.write("<br>You can fly straight to {}!!! Or take take routes as following:".format(end))
+        
+        for i in range(len(path)):
+            if 'Cinnibar Island' in path[i]:
+                if item != 'Water type Pokemon':
+                    self.response.write('<br>Please take a water type Pokemon with you to get to  Cinnibar Island.')
+        
+        self.response.write(path)
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
